@@ -251,6 +251,8 @@ h1{font-size:clamp(42px,6.5vw,78px);line-height:1.2;letter-spacing:-.04em;backgr
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e4edf2;--ink2:#afc0cb;--teal:#9bd1cc;--glass:rgba(25,43,57,.9);--glass-b:rgba(177,211,229,.15);--line:rgba(177,211,229,.16);--base:linear-gradient(145deg,#111f2b,#1a2736 65%,#2b2433)}:root:not([data-theme="light"]) .card,:root:not([data-theme="light"]) .person-card,:root:not([data-theme="light"]) .sheet{background:var(--glass)}:root:not([data-theme="light"]) .identity{background:linear-gradient(145deg,#263f4a,#3d3247)}:root:not([data-theme="light"]) .progress-wrap,:root:not([data-theme="light"]) .nav{background:rgba(20,36,49,.95)}:root:not([data-theme="light"]) .pill,:root:not([data-theme="light"]) .stat,:root:not([data-theme="light"]) .info,:root:not([data-theme="light"]) .domain-card,:root:not([data-theme="light"]) .scale button,:root:not([data-theme="light"]) .people-index,:root:not([data-theme="light"]) .catalog-btn,:root:not([data-theme="light"]) .actions .ghost{background:rgba(255,255,255,.05)}:root:not([data-theme="light"]) .person-photo{background:linear-gradient(145deg,#29424b,#443443)}:root:not([data-theme="light"]) .code-stack span{background:rgba(255,255,255,.08);color:var(--ink)}:root:not([data-theme="light"]) #welcome{background:linear-gradient(145deg,#182e3b,#392c3b)}:root:not([data-theme="light"]) #welcome .orb{background:rgba(255,255,255,.08)}:root:not([data-theme="light"]) .kicker,:root:not([data-theme="light"]) .identity .kicker{color:var(--teal)}}
 @media(prefers-reduced-motion:reduce){body:before{animation:none}}
 
+
+.insight-panel{margin-top:34px;padding-top:30px;border-top:1px solid var(--line)}.insight-title h2{font-size:25px;margin:10px 0}.insight-title>p{font-size:13px;color:var(--ink2);margin:0}.insight-tags{display:flex;flex-wrap:wrap;gap:7px;margin:18px 0 22px}.insight-tags span{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:7px 10px;background:var(--mint)}.insight-card{margin:16px 0;padding:24px;border:1px solid var(--line);border-radius:20px;background:var(--glass)}.insight-heading{display:flex;align-items:center;gap:12px;margin-bottom:15px}.insight-heading>span{display:grid;place-items:center;flex:0 0 32px;height:32px;border-radius:10px;background:var(--mint);color:var(--teal);font-size:11px;letter-spacing:.06em}.insight-heading h3{font-size:18px;line-height:1.5;margin:0}.insight-card p{font-size:14px;line-height:1.95;margin:10px 0;color:var(--ink2)}.insight-quote,.insight-tip{padding:17px 18px;border-left:3px solid var(--teal);background:var(--mint);border-radius:0 13px 13px 0;margin:18px 0}.insight-quote b,.insight-tip b{font-size:12px;color:var(--ink)}.insight-quote p,.insight-tip p{margin-bottom:0}.insight-muted{font-size:12px!important}.insight-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.insight-pair>div{padding:16px;border-radius:14px;background:var(--mint)}.insight-label{font-size:12px;color:var(--teal);font-weight:700}.axis-insights{display:grid;gap:18px}.axis-insight{display:flex;align-items:flex-start;gap:13px}.axis-letter{display:grid;place-items:center;flex:0 0 27px;height:27px;border:1px solid var(--line);border-radius:8px;color:var(--teal);font-size:11px}.axis-insight b{font-size:13px}.axis-insight p{font-size:13px;margin:6px 0}.axis-advice{font-size:12px;color:var(--teal);line-height:1.85}.action-plan{list-style:none;padding:0;margin:0;counter-reset:action}.action-plan li{counter-increment:action;position:relative;padding:0 0 16px 40px;margin-top:12px;border-bottom:1px solid var(--line)}.action-plan li:before{content:counter(action);position:absolute;left:0;top:0;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--mint);color:var(--teal);font-size:11px}.action-plan li>span{font-size:13px;font-weight:700}.action-plan li p{font-size:13px;margin:7px 0 0}.insight-takeaway{font-size:13px;line-height:1.9;color:var(--teal);padding-top:18px}@media(max-width:760px){.insight-card{padding:20px 17px}.insight-pair{grid-template-columns:1fr}.insight-title h2{font-size:23px}.insight-card p{font-size:13px}.insight-heading h3{font-size:17px}} 
 </style>
 </head>
 <body>
@@ -319,7 +321,7 @@ h1{font-size:clamp(42px,6.5vw,78px);line-height:1.2;letter-spacing:-.04em;backgr
    <div class="kicker">你的 70 型</div>
    <h2 id="resultCriterion"></h2>
    <p class="result-desc" id="resultSummary"></p>
-   <div class="axis-list" id="axisList"></div>
+   <div class="axis-list" id="axisList"></div><div id="insightPanel" class="insight-panel" aria-label="風格解讀與建議"></div>
    <div class="info-grid">
     <div class="info"><b>主導動機</b><p id="motiveCopy"></p></div>
     <div class="info"><b>場域</b><p id="domainCopy"></p></div>
@@ -455,6 +457,7 @@ function finish(){
    const pct=Math.round((a.sums[k]/a.max[k]+1)/2*100);
    return `<div class="axis"><span>${l}</span><div class="bar"><i style="width:${pct}%"></i></div><span>${r}</span></div>`;
  }).join("");
+ renderInsights(a,m,t,runner);
  $("#motiveCopy").textContent=MOTIVES[m].copy;
  $("#domainCopy").textContent=DOMAINS[domain].desc;
  const ex=EXAMPLES[t.code]||[];
@@ -470,6 +473,46 @@ function personCard(x){const e=escPerson;return `<article class="person-card" id
 function renderPeopleIndex(){const q=document.getElementById('peopleSearch').value.trim().toLowerCase();const arr=Object.values(EXAMPLES).flat().filter(x=>`${x.name} ${x.index} ${x.type} ${x.category} ${x.region}`.toLowerCase().includes(q));document.getElementById('peopleGrid').innerHTML=arr.map(x=>personCard(x).replace('id="person-','id="index-person-')).join('');document.getElementById('peopleCount').textContent=arr.length?`共 ${arr.length} 位人物`:'找不到符合的人物';}
 document.getElementById('peopleSearch').oninput=renderPeopleIndex;
 document.querySelector('.people-index').addEventListener('toggle',function(){if(this.open)renderPeopleIndex()});
+
+
+const STYLE_GUIDE={
+舞台:{intro:'你可能更習慣透過聲音、畫面、表演或現場氛圍，讓別人理解你的觀點。對你而言，訊息如何被感受，往往和訊息本身一樣重要。',strength:'將抽象想法轉化成有記憶點的體驗，並留意節奏、情緒與呈現方式。',blind:'當回饋集中在掌聲、外觀或即時反應時，容易忽略作品原本想說的話。',fit:'能讓你完成一段作品、排練後呈現，並收到具體觀眾回饋的環境。',step:'選一個想傳達的觀點，做成一分鐘的聲音、影像或現場片段；請兩個人說出他們記住了什麼。'},
+知識:{intro:'你可能偏好先把資訊整理清楚，再透過解釋、分類或教學建立影響力。當複雜的事變得可以理解，你比較容易感到自己的投入有價值。',strength:'辨認概念之間的關係，拆解資訊，替不同程度的對象建立理解路徑。',blind:'若太快進入分析，可能錯過對方此刻需要的是情緒支持，或一個可以先做的小決定。',fit:'容許備課、整理與驗證資訊，也能直接接觸讀者或學習者疑問的環境。',step:'把你熟悉的一個概念寫成三句話，請不熟悉的人讀過，再根據他提出的問題修正一次。'},
+關係:{intro:'你可能更留意互動的氣氛，以及彼此是否感到被理解。你建立存在感的方式，常來自持續回應、陪伴與讓不同的人願意參與。',strength:'感受到對話中的落差，維持交流節奏，讓關係可以持續而非只發生一次。',blind:'太重視維持和諧時，可能延後說出自己的需求，或承接超過負荷的期待。',fit:'重視長期互信、有清楚角色分工，並允許坦白討論界線的團隊。',step:'在下一次合作前說清楚一個你能提供的協助，以及一個需要保留的時間或界線。'},
+公共:{intro:'你可能傾向把個人經驗連結到規則、制度與共同選擇。比起只描述問題，你更想釐清立場、責任和可以改變的環節。',strength:'整理多方觀點與利益，將議題轉成可以討論的選項或行動。',blind:'立場鮮明時，容易把反對意見理解成價值衝突，忽略對方可能只是掌握不同資訊。',fit:'有透明決策、可追溯證據與協商空間，並能確認誰負責落實的環境。',step:'選一個關心的議題，寫下你的主張、最強的反方理由，以及雙方都可能接受的一項改善。'},
+商業:{intro:'你可能習慣從需求、資源與成果之間的關係看事情。你在意想法能否形成可持續的模式，以及投入之後是否帶來可觀察的價值。',strength:'辨認機會與限制，將目標拆成資源配置、執行步驟和成果檢查。',blind:'若太快以效益評估所有選項，可能低估信任建立、創意試錯與長期累積所需的時間。',fit:'目標清楚、能接觸真實使用者，並有空間用小規模實驗驗證假設的環境。',step:'挑一個待改善的流程，記錄目前耗時與使用者困擾；試行一項改動，再比較前後結果。'},
+研究:{intro:'你可能比較願意延後結論，先確認問題、證據與推論是否一致。你建立信任的方式，往往是讓別人看見結論背後的觀察與方法。',strength:'維持對細節和不確定性的敏感，區分已知事實、假設與尚待驗證的部分。',blind:'當驗證沒有明確終點時，可能一直補資料，讓原本可以推進的決定停在準備階段。',fit:'容許深度工作、有方法討論和同儕檢視，也訂得出階段交付日期的環境。',step:'把目前一個疑問拆成可驗證的假設，預先寫下支持或推翻它需要的證據，以及停止蒐集的日期。'},
+'喜劇／混合':{intro:'你可能習慣用幽默、反差或跨領域連結，重新組合大家熟悉的事物。你不一定沿著既有分類表達，而是透過意外的角度讓人重新注意。',strength:'發現情境中的矛盾，打開新的切入點，降低陌生議題的進入門檻。',blind:'對你有趣的反差，對別人可能是誤解或冒犯；若只追求新鮮，也可能讓主題失去重心。',fit:'允許測試點子、提供坦率回饋，且能清楚討論受眾和表達界線的環境。',step:'把一個日常觀察寫成兩個版本：直接敘述與幽默敘述；請朋友比較哪些地方清楚、哪些地方容易誤會。'}
+};
+const MOTIVE_GUIDE={
+M1:{detail:'目標清楚、進度看得見時，你可能更容易投入；成果模糊或長期沒有回饋時，動力較容易下降。',advice:'替成果設定一個你能控制的過程指標，也安排完成後的休息，避免把自我評價完全綁在結果上。'},
+M2:{detail:'新的問題、觀點與可能性，可能比固定流程更能吸引你。你投入的起點常是好奇，而非已有完整答案。',advice:'保留探索時段，同時為每個新方向設定一次小交付，讓好奇心留下可以回顧的成果。'},
+M3:{detail:'共同經驗與被理解的感覺，可能是你持續投入的重要來源。獨自完成事情未必和有人一起參與帶來同樣的滿足。',advice:'主動安排有品質的交流，也保留獨立決定的空間；不必為了維持連結答應每一個請求。'},
+M4:{detail:'你可能希望成果保留自己的觀點與風格，而不只是符合標準。能否忠於想表達的內容，會影響你的投入程度。',advice:'先寫下這次最想保留的一個核心，再區分可以調整的形式，讓回饋成為修正而非否定。'},
+M5:{detail:'當你看見事情有機會改變他人的理解、規則或環境時，可能特別願意投入。你需要知道行動會帶來什麼影響。',advice:'先界定你能影響的人與範圍，邀請利害關係人提供回饋，並區分「被注意」與「實際改善」。'},
+M6:{detail:'可預期的安排、穩定支持與風險可控，可能讓你更安心投入。面對變動時，你可能先想確認後果與備案。',advice:'為重要決定寫下風險、備案和可接受的損失，再挑一項可逆的小實驗，避免等到完全確定才行動。'},
+M7:{detail:'看見別人的困難被減輕，可能是你感到有意義的時刻。你容易注意需求，也願意把複雜的事情變得更容易使用。',advice:'先確認對方真正需要什麼，再設定協助的範圍與結束條件；服務可以持續，也需要照顧自己的負荷。'}
+};
+const AXIS_GUIDE={
+A:[{label:'內斂呈現',desc:'你可能偏好先整理，再選擇時機表達；存在感常來自內容與細節。',tip:'重要討論前先寫三個重點，並在會議中保留一次主動發言。'},{label:'外顯呈現',desc:'你可能透過即時反應與主動表達推進互動，較容易讓人看見你的想法。',tip:'說完一段觀點後停一下，邀請較安靜的人補充，再決定下一步。'}],
+B:[{label:'個體重心',desc:'你可能較在意個人立場、自主性與自己的完成方式。',tip:'合作開始時先說明分工、決策權與交付標準，減少彼此猜測。'},{label:'群體重心',desc:'你可能較留意共同參與、彼此回應，以及團體是否朝同一方向前進。',tip:'收集意見之後，也明確說出自己的選擇，避免共識變成無限等待。'}],
+C:[{label:'低刺激節奏',desc:'你可能在較安靜、可預期的節奏中，發揮比較穩定。',tip:'把需要專注的工作排成完整時段，減少通知與臨時切換。'},{label:'高刺激節奏',desc:'你可能喜歡變化、即時回饋或較有張力的任務。',tip:'在密集互動之後安排恢復時間，並替例行工作加入明確的小目標。'}],
+D:[{label:'收斂邊界',desc:'你可能偏好清楚界線與一致的公開形象，會選擇性地分享自己。',tip:'向合作對象說明可以公開、需要先詢問，以及希望保留的內容。'},{label:'開放邊界',desc:'你可能願意分享不同面向，並讓公開表達隨情境調整。',tip:'公開前留一次檢查：這段分享是否符合目的，也尊重涉及他人的界線？'}]
+};
+function renderInsights(a,m,t,runner){
+ const e=escPerson,g=STYLE_GUIDE[t.domain]||STYLE_GUIDE[domain],mot=MOTIVE_GUIDE[m];
+ const axes=Object.entries(AXIS_GUIDE).map(([k,choices])=>{const n=a.sums[k]/a.max[k],v=choices[n>=0?1:0];return {k,n,v,balanced:Math.abs(n)<.2}});
+ const ranked=CATALOG.filter(x=>x.domain===t.domain).filter(x=>subtypeAns[x.code]===subtypeAns[t.code]);
+ const context=ranked.length>1?`有 ${ranked.length} 個類型得到同樣的最高符合分數，因此「${t.name}」是其中一個參考方向。也可以對照「${runner.name}」理解自己的混合風格。`:`你的次高類型是「${runner.name}」。兩者可以同時出現在不同情境，並不需要把自己固定成單一角色。`;
+ const card=(num,title,body,cls='')=>`<section class="insight-card ${cls}"><div class="insight-heading"><span>${num}</span><h3>${title}</h3></div>${body}</section>`;
+ document.getElementById('insightPanel').innerHTML=`<div class="insight-title"><span class="kicker">YOUR STYLE, IN CONTEXT</span><h2>更完整地認識你的風格</h2><p>依你的作答，從表達方式到實際行動。</p></div><div class="insight-tags"><span>${e(t.code)} ${e(t.name)}</span><span>${e(MOTIVES[m].name)}驅動</span><span>${e(t.domain)}場域</span></div>`+
+ card('01','你的風格敘述',`<p>${e(g.intro)}</p><div class="insight-quote"><b>${e(t.name)}的辨識線索</b><p>${e(t.criterion)}</p></div><p>這次作答顯示，你認為這項線索與自己較接近。你可以回想最近一個真實場景，確認它是在工作、創作或社交中出現，而不是把它當成所有情境都適用的定義。</p><p class="insight-muted">${e(context)}</p>`)+
+ card('02','優勢與可能的盲點',`<div class="insight-pair"><div><span class="insight-label">可以發揮的優勢</span><p>${e(g.strength)}</p></div><div><span class="insight-label">值得留意的盲點</span><p>${e(g.blind)}</p></div></div><p class="insight-muted">以上是這種輸出場域常見的觀察角度，是否符合你，仍需要用自己的經驗確認。</p>`)+
+ card('03','什麼讓你願意投入',`<span class="insight-label">${e(m)} · ${e(MOTIVES[m].name)}動機</span><p>${e(mot.detail)}</p><div class="insight-tip"><b>給你的建議</b><p>${e(mot.advice)}</p></div>`)+
+ card('04','溝通與合作方式',`<div class="axis-insights">${axes.map(({k,v,balanced})=>`<div class="axis-insight"><span class="axis-letter">${k}</span><div><b>${balanced?'兩端接近 · 可依情境調整':e(v.label)}</b><p>${balanced?'這個軸向的回答較接近中間，沒有明顯偏向。觀察自己在熟悉與陌生的情境中，是否會採取不同方式。':e(v.desc)}</p><div class="axis-advice">${balanced?'建議：比較一次讓你舒服、一次讓你耗能的互動，記下其中的差異。':'建議：'+e(v.tip)}</div></div></div>`).join('')}</div>`)+
+ card('05','適合你的投入環境',`<p>${e(g.fit)}</p><p>選擇下一個任務或合作時，可以先確認三件事：成果怎麼被看見、回饋多久出現一次，以及你能保有多少自主空間。它們與你的投入方式是否相容，比角色名稱本身更有參考價值。</p><div class="insight-tip"><b>可以先問的一句話</b><p>「這次合作最期待我提供什麼？做到什麼程度就算完成？」</p></div>`)+
+ card('06','把結果變成一週行動',`<ol class="action-plan"><li><span>觀察</span><p>記下一次你最投入的時刻，描述當時的任務、互動對象與環境。</p></li><li><span>試做</span><p>${e(g.step)}</p></li><li><span>回顧</span><p>一週後問自己：哪個部分讓我更有能量？哪個部分需要調整？挑一項有效做法，帶進下一次任務。</p></li></ol><div class="insight-takeaway">優先練習：${e(axes.filter(x=>!x.balanced).sort((x,y)=>Math.abs(y.n)-Math.abs(x.n))[0]?.v.tip||'先觀察自己在不同情境中的差異，再選一個小改動。')}</div>`,'action-card');
+}
 
 function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1600)}
 $("#startBtn").onclick=()=>{phase="axis";index=0;show("quiz");renderQuiz()};
